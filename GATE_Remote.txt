@@ -1,0 +1,42 @@
+en
+conf t
+hostname GATE_Remote
+int g0/1
+ip address 172.16.10.1 255.255.255.0
+no shutdown
+ip nat inside
+exit
+int g0/1
+ip nat inside
+exit
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+access-list 1 permit 172.16.10.0 0.0.0.255
+ip dhcp pool REMOTE_POOL
+network 172.16.10.0 255.255.255.0
+default-router 172.16.10.1
+exit
+ntp server 203.0.99.250
+exit
+interface GigabitEthernet0/1
+no shutdown
+int s0/0/1
+ip address 10.0.0.5 255.255.255.0
+no shutdown
+exit
+router ospf 1
+redistribute connected subnets 
+network 10.0.0.4 0.0.0.3 area 0
+exit
+access-list 1 permit 203.0.99.0 0.0.0.255
+line vty 0 4
+access-class 1 in
+exit
+ip domain-name tu.kielce
+crypto key generate rsa general-keys modulus 1024
+username admin privilege 15 secret cisco
+line vty 0 4
+transport input ssh
+login local
+exit
+ip route 203.0.99.0 255.255.255.0 10.0.0.1 
+

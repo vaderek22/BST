@@ -1,0 +1,35 @@
+en
+conf t
+hostname DISTR_A
+int r g1/0/1-24
+switchport mode trunk
+exit
+VTP domain PST
+vtp version 2
+vtp password cisco123
+vtp mode server
+vlan 101
+name VLAN101
+vlan 102
+name VLAN102
+vlan 103
+name VLAN103
+vlan 99
+name MANAGMENT
+exit
+int r g1/0/1-4
+switchport trunk allowed vlan 101,102,103,99
+exit
+spanning-tree mode pvst
+spanning-tree vlan 101,102,103,99 priority 0
+int vlan 99
+ip address 203.0.99.3 255.255.255.0
+no shutdown
+ip helper-address 203.0.99.254
+exit
+int vlan 101
+ip address 192.168.101.3 255.255.255.0
+no shutdown
+ip helper-address 192.168.101.254
+exits
+ip default-gateway 203.0.99.1

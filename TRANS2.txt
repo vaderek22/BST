@@ -1,0 +1,22 @@
+en
+conf t
+hostname TRANS2
+interface Serial0/0/0
+ip address 203.0.114.2 255.255.255.252
+no shutdown
+exit
+interface Serial0/0/1
+ip address 203.0.115.1 255.255.255.252
+no shutdown
+exit
+router bgp 65003
+bgp log-neighbor-changes
+no synchronization
+neighbor 203.0.114.1 remote-as 65002
+neighbor 203.0.115.2 remote-as 65004
+network 203.0.114.0 mask 255.255.255.252
+network 203.0.115.0 mask 255.255.255.252
+exit
+ip route 172.17.2.0 255.255.255.0 172.17.2.2
+ip route 172.17.3.0 255.255.255.0 172.17.2.2
+ip route 172.17.4.0 255.255.255.0 172.17.2.2z

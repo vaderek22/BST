@@ -1,0 +1,126 @@
+en
+conf t
+hostname GATE_B
+int g0/0
+no shutdown
+exit
+int g0/0.101
+encapsulation dot1Q 101
+ip address 192.168.101.2 255.255.255.0
+exit
+int g0/0.102
+encapsulation dot1Q 102
+ip address 192.168.102.2 255.255.255.0
+exit
+int g0/0.103
+encapsulation dot1Q 103
+ip address 192.168.103.2 255.255.255.0
+exit
+int g0/0.99
+encapsulation dot1Q 99
+ip address 203.0.99.2 255.255.255.0
+standby 1 ip 203.0.99.254
+exit
+
+ntp server 203.0.99.250
+exit
+
+ip domain-name tu.kielce
+crypto key generate rsa general-keys modulus 1024
+username admin privilege 15 secret cisco
+line vty 0 4
+transport input ssh
+login local
+exit
+ip ssh version 2
+ip access-list extended ACL_101
+permit ip any 203.0.99.0 0.0.0.255
+permit ip any 192.168.101.0 0.0.0.255
+deny ip any any
+exit
+
+ip access-list extended ACL_102
+permit ip any 203.0.99.0 0.0.0.255
+permit ip any 192.168.102.0 0.0.0.255
+deny ip any any
+exit
+
+ip access-list extended ACL_103
+permit ip any 203.0.99.0 0.0.0.255
+permit ip any 192.168.103.0 0.0.0.255
+deny ip any any
+exit
+
+ip access-list extended ACL_111
+permit ip any 203.0.99.0 0.0.0.255
+permit ip any 192.168.101.0 0.0.0.255
+permit ip any 192.168.102.0 0.0.0.255
+permit ip any 192.168.103.0 0.0.0.255
+permit ip any 172.16.10.0 0.0.0.255
+permit ip any 172.17.2.0 0.0.0.255
+permit ip any 172.17.3.0 0.0.0.255
+permit ip any 172.17.4.0 0.0.0.255
+permit ip 203.0.99.0 0.0.0.255 any
+permit ip 172.17.2.0 0.0.0.255 any
+exit
+
+access-list 1 permit 203.0.99.0 0.0.0.255
+line vty 0 4
+access-class 1 in
+exit
+
+interface GigabitEthernet0/0.99
+standby 1 ip 203.0.99.254
+ip access-group ACL_111 in
+exit
+
+interface GigabitEthernet0/0.101
+standby 2 ip 192.168.101.254
+ip access-group ACL_101 in
+exit
+
+interface GigabitEthernet0/0.102
+standby 3 ip 192.168.102.254
+standby 3 priority 110
+standby 3 preempt
+ip access-group ACL_102 in
+exit
+
+interface GigabitEthernet0/0.103
+standby 4 ip 192.168.103.254
+standby 4 priority 110
+standby 4 preempt
+ip access-group ACL_103 in
+exit
+
+ip dhcp pool VLAN102
+network 192.168.102.0 255.255.255.0
+default router 192.168.102.254
+exit
+
+ip dhcp pool VLAN103
+network 192.168.103.0 255.255.255.0
+default router 192.168.103.254
+exit
+
+ip dhcp excluded-address 192.168.103.0 192.168.103.4
+ip dhcp excluded-address 192.168.102.0 192.168.102.4
+
+router bgp 65001
+neighbor 203.0.113.2 remote-as 65002
+network 192.168.101.0
+network 192.168.102.0
+network 192.168.103.0
+network 203.0.99.0
+network 203.0.113.0 mask 255.255.255.252
+exit
+
+interface Serial0/0/0
+ip address 203.0.113.1 255.255.255.252
+no shutdown
+exit
+
+ip route 172.17.2.0 255.255.255.0 203.0.114.1
+ip route 172.17.3.0 255.255.255.0 203.0.114.1
+ip route 172.17.4.0 255.255.255.0 203.0.114.1
+ip route 172.16.10.0 255.255.255.0 203.0.99.1

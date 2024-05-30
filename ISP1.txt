@@ -1,0 +1,20 @@
+en
+conf t
+hostname ISP1
+router ospf 1
+redisredistribute connected subnets 
+network 10.0.0.0 0.0.0.3 area 0
+network 10.0.0.4 0.0.0.3 area 0
+exit
+interface Serial0/0/0
+ip address 10.0.0.2 255.255.255.252
+no shutdown
+exit
+interface Serial0/0/1
+ip address 10.0.0.6 255.255.255.252
+no shutdown
+exit
+access-list 1 deny any
+line vty 0 4
+access-class 1 in
+exit

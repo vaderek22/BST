@@ -1,0 +1,36 @@
+en
+conf t
+hostname FLOOR1
+VTP domain PST
+vtp version 2
+vtp password cisco123
+vtp mode client
+int r f0/1-6
+switchport access vlan 101
+exit
+int r f0/7-13
+switchport access vlan 102
+exit
+int r f0/14-20
+switchport access vlan 103
+exit
+int r f0/21-24
+switchport access vlan 99
+exit
+int r f0/1-24
+switchport port-security
+switchport port-security maximum 2
+switchport port-security mac-address sticky
+switchport port-security violation restrict
+spanning-tree portfast
+spanning-tree bpduguard enable
+exit
+int r g0/1-2
+switchport nonegotiate
+exit
+int f0/14
+switchport port-security mac-address sticky 0040.0B69.E2E4
+exit
+int f0/15
+switchport port-security mac-address sticky 000B.BE2B.6E56
+exit

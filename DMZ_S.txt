@@ -1,0 +1,7 @@
+en
+conf t
+hostname DMZ_S
+int vlan 1
+ip addres 172.17.4.4 255.255.255.0
+no shutdown
+exit

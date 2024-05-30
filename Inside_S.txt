@@ -1,0 +1,7 @@
+en
+conf t
+hostname Inside_S
+int vlan 1
+ip addres 172.17.3.3 255.255.255.0
+no shutdown
+exit

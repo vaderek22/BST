@@ -1,0 +1,25 @@
+en
+conf t
+hostname DISTR_B
+int r g1/0/1-24
+switchport mode trunk
+exit
+VTP domain PST
+vtp version 2
+vtp password cisco123
+vtp mode server
+int r g1/0/1-4
+switchport trunk allowed vlan 101,102,103,99
+int vlan 102
+ip address 192.168.102.3 255.255.255.0
+no shutdown
+exit
+ip helper-address 192.168.102.254
+exit
+int vlan 103
+ip address 192.168.103.3 255.255.255.0
+no shutdown
+ip helper-address 192.168.103.254
+exit
+spanning-tree mode pvst
+spanning-tree vlan 101,102,103,99 priority 4096

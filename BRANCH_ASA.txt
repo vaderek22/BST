@@ -1,0 +1,29 @@
+en
+
+conf t
+hostname BRANCHASA
+interface GigabitEthernet1/1
+nameif OUT
+security-level 0
+ip address 172.17.2.1 255.255.255.0
+no shutdown
+interface GigabitEthernet1/2
+nameif IN
+security-level 100
+ip address 172.17.3.1 255.255.255.0
+no shutdown
+interface GigabitEthernet1/3
+nameif DMZ
+security-level 50
+ip address 172.17.4.1 255.255.255.0
+no shutdown
+object network obj-INSIDE_S_VLAN
+subnet 172.17.3.0 255.255.255.0
+object network obj-OUT
+subnet 0.0.0.0 0.0.0.0
+access-list OUT_TO_DMZ extended permit ip 172.17.2.0 255.255.255.0 172.17.4.0 255.255.255.0
+access-list IN_TO_DMZ extended deny ip 172.17.3.0 255.255.255.0 172.17.4.0 255.255.255.0
+access-list OUT_TO_IN extended permit ip any any
+access-group OUT_TO_IN in interface OUT
+route OUT 203.0.99.0 255.255.255.0 203.0.115.2//adres 172.17.2.2
+route DMZ 203.0.99.0 255.255.255.0 203.0.115.2

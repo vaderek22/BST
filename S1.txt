@@ -1,0 +1,8 @@
+en
+conf t
+hostname S1
+ip dhcp snooping
+ip dhcp snooping vlan 1
+interface fa0/1
+ip dhcp snooping trust
+exit
